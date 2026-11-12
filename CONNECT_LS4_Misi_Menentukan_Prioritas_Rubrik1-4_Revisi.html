@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misi Menentukan Prioritas — CONNECT LS4</title>
+<style>
+:root{
+  --cream:#fff8ed;--paper:#fffdf8;--orange:#df8748;--orange-dark:#a95728;
+  --brown:#684936;--brown2:#8b6b55;--soft:#f5e6d4;--line:#ead7c2;
+  --green:#557b61;--green-bg:#eaf3e9;--red:#a34e43;--red-bg:#faece8;
+  --shadow:0 12px 32px rgba(93,62,38,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--brown);font-family:Arial,Helvetica,sans-serif;line-height:1.55}
+button,textarea,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid #a95728;outline-offset:3px}
+:focus:not(:focus-visible){outline:none}
+.app{max-width:980px;margin:0 auto;padding:20px 18px 42px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--brown)}
+.brand-mark{width:42px;height:42px;border-radius:14px;background:#f4dfc7;display:grid;place-items:center;font-size:24px}
+.step-label{font-size:13px;color:var(--brown2);font-weight:700}
+.progress-wrap{height:8px;background:#eee0d0;border-radius:20px;overflow:hidden;margin:0 0 24px}
+.progress{height:100%;width:0;background:var(--orange);transition:width .25s}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:clamp(20px,4vw,36px);box-shadow:var(--shadow)}
+.hero{text-align:center;padding:34px 20px}
+.fox{font-size:64px;line-height:1;margin-bottom:14px}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.15;margin:0 0 10px;color:var(--brown)}
+h2{font-size:clamp(23px,4vw,30px);margin:0 0 8px;color:var(--brown)}
+h3{font-size:18px;margin:0 0 8px}
+.subtitle{color:var(--brown2);margin:0 auto 22px;max-width:680px}
+.transfer-box{background:#f3f6ef;border:1px solid #d5e1cf;border-radius:16px;padding:17px;margin:18px 0}
+.transfer-box h3{color:#365b40}
+.kicker{font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:var(--orange-dark);font-weight:800;margin-bottom:8px}
+.story{background:#fff5e8;border:1px solid #f0dcc4;border-radius:18px;padding:18px 20px;margin:18px 0}
+.story p{margin:0}
+.instruction{background:#f8f0e6;border-left:4px solid var(--orange);padding:13px 16px;border-radius:10px;margin:18px 0}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}
+.item-card{border:1px solid var(--line);border-radius:17px;padding:16px;background:#fffdfa;min-width:0}
+.item-icon{font-size:34px;margin-bottom:8px}
+.item-card strong{display:block;margin-bottom:5px}
+.item-card small{color:var(--brown2)}
+.order-list{display:grid;gap:10px;margin:18px 0}
+.order-row{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:white}
+.rank{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#f5e4d1;font-weight:800}
+.order-actions{display:flex;gap:6px}
+.icon-btn{border:1px solid var(--line);background:#fff8ef;border-radius:9px;padding:7px 10px;color:var(--brown)}
+.icon-btn:disabled{opacity:.35;cursor:not-allowed}
+.field{margin:18px 0}
+label{display:block;font-weight:700;margin-bottom:7px}
+textarea{width:100%;min-height:92px;resize:vertical;border:1px solid #d9c4ad;border-radius:13px;padding:12px 14px;background:#fffefa;color:var(--brown);outline:none}
+textarea:focus,input:focus{border-color:var(--orange);box-shadow:0 0 0 3px #df874822}
+input[type=text]{width:100%;border:1px solid #d9c4ad;border-radius:12px;padding:11px 13px;background:#fffefa}
+.muted{color:var(--brown2);font-size:14px}
+.actions{display:flex;justify-content:space-between;gap:10px;margin-top:26px;flex-wrap:wrap}
+.btn{border:0;border-radius:13px;padding:12px 20px;font-weight:800;transition:.15s}
+.btn-primary{background:var(--orange);color:white}
+.btn-primary:hover{background:var(--orange-dark)}
+.btn-secondary{background:#f1e4d6;color:var(--brown)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.feedback{border-radius:14px;padding:14px 16px;margin:16px 0;display:none}
+.feedback.show{display:block}
+.feedback.good{background:var(--green-bg);border:1px solid #c9dfc8;color:#365b40}
+.feedback.warn{background:#fff4e2;border:1px solid #efd7ae;color:#765125}
+.feedback.bad{background:var(--red-bg);border:1px solid #edc9c2;color:#803d35}
+.hidden{display:none!important}
+.change-box{background:#fff8ed;border:1px dashed #d9b48f;border-radius:16px;padding:17px;margin:18px 0}
+.change-box p{margin:6px 0 0}
+.result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.result-card{background:#fff8ef;border:1px solid var(--line);border-radius:14px;padding:14px}
+.score{font-size:30px;font-weight:900;color:var(--orange-dark)}
+.rubric-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+.rubric-table th,.rubric-table td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}
+.rubric-table th{background:#f7eadb}
+select{width:100%;padding:10px;border:1px solid #d9c4ad;border-radius:10px;background:white;color:var(--brown)}
+.teacher-box{border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:22px;background:#fffdfa}
+.teacher-box summary{font-weight:800;cursor:pointer}
+.teacher-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.note{font-size:13px;color:var(--brown2)}
+.sentence-guide{background:#f7f0e7;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:9px 0 10px;font-size:14px;color:#765b45}
+.word-count{font-size:12px;color:var(--brown2);text-align:right;margin-top:5px}
+.word-count.ok{color:var(--green);font-weight:700}
+.answer-key{background:#eef5ec;border:1px solid #cbdcc7;border-radius:16px;padding:17px;margin:18px 0}
+.answer-key h3{color:#365b40}
+.answer-key ol{padding-left:22px}
+.answer-key li{margin:9px 0}
+footer{text-align:center;color:#9b8069;font-size:12px;margin-top:20px}
+@media(max-width:680px){
+ .app{padding:14px 12px 30px}.cards{grid-template-columns:1fr}.item-card{display:flex;gap:12px;align-items:center}.item-icon{margin:0;font-size:30px}
+ .order-row{grid-template-columns:36px 1fr auto;padding:11px}.result-grid,.teacher-grid{grid-template-columns:1fr}
+ .rubric-table{font-size:12px}.rubric-table th,.rubric-table td{padding:7px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><div class="brand-mark">🦊</div><span>Misi Menentukan Prioritas</span></div>
+    <div class="step-label" id="stepLabel">CONNECT · LS4</div>
+  </div>
+  <div class="progress-wrap" aria-label="Kemajuan permainan"><div class="progress" id="progress"></div></div>
+  <main id="screen" class="panel" aria-live="polite"></main>
+  <footer>IPAS · Kelas IV SD · Tahap CONNECT (Application / Transfer Task)</footer>
+</div>
+<script>
+const screen=document.getElementById('screen');
+const progress=document.getElementById('progress');
+const stepLabel=document.getElementById('stepLabel');
+const state={
+ page:0, order:[0,1,2], initialOrder:null, revisedOrder:null,
+ reasons:['','',''], changeDecision:'', changeReason:'', transferAnswer:'',
+ submitted:false, teacherScores:[0,0,0,0], teacherFeedback:'',
+};
+const items=[
+ {icon:'🧰',name:'Mengganti isi kotak P3K yang kosong',short:'Kotak P3K',detail:'Kotak P3K di kelas sudah kosong.'},
+ {icon:'🖊️',name:'Membeli spidol yang hampir habis',short:'Spidol kelas',detail:'Spidol kelas hampir habis.'},
+ {icon:'🎨',name:'Membeli hiasan kelas',short:'Hiasan kelas',detail:'Kelas membutuhkan hiasan baru agar terlihat lebih menarik.'}
+];
+const pages=['Pembukaan','Situasi baru','Alasan keputusan','Perubahan kondisi','Evaluasi','Hasil'];
+function setProgress(){
+ progress.style.width=((state.page+1)/6*100)+'%';
+ stepLabel.textContent=`CONNECT · LS4 · ${pages[state.page]}`;
+}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function nav(back, next, nextText='Berikutnya'){
+ return `<div class="actions">
+  <button class="btn btn-secondary" onclick="go(${back})" ${back<0?'disabled':''}>Sebelumnya</button>
+  <button class="btn btn-primary" onclick="${next}">${nextText}</button>
+ </div>`;
+}
+function render(){
+ setProgress();
+ if(state.page===0) renderWelcome();
+ if(state.page===1) renderSituation();
+ if(state.page===2) renderReasons();
+ if(state.page===3) renderChange();
+ if(state.page===4) renderEvaluation();
+ if(state.page===5) renderResult();
+}
+function renderWelcome(){
+ screen.innerHTML=`
+ <section class="hero">
+  <div class="fox">🦊</div><div class="kicker">Tahap Connect · LS4</div>
+  <h1>Misi Baru Menantimu!</h1>
+  <p class="subtitle">Halo, teman-teman! Kamu sudah belajar menentukan prioritas. Sekarang gunakan cara berpikir itu dalam masalah baru di lingkungan sekolah. Susun pilihan, jelaskan alasan, lalu tinjau kembali keputusanmu ketika ada informasi tambahan.</p>
+  <div class="story"><strong>Ingat!</strong><p>Ingat tiga pertanyaan ini: Apa kondisi kebutuhannya? Seberapa penting dan bermanfaat? Apa akibatnya jika ditunda? Gunakan ketiganya untuk mengambil keputusan, bukan sekadar memilih barang yang kamu sukai.</p></div>
+  <button class="btn btn-primary" onclick="go(1)">Mulai Misi</button>
+ </section>`;
+}
+function renderSituation(){
+ screen.innerHTML=`
+ <div class="kicker">Misi 1 · Menghadapi situasi baru</div><h2>Apa yang Harus Didahulukan?</h2>
+ <div class="story"><p>Kelas IV sedang merencanakan penggunaan dana kelas yang terbatas. Ada tiga kebutuhan yang perlu dipertimbangkan: kotak P3K sudah kosong, spidol kelas hampir habis, dan kelas ingin membeli hiasan baru. Dana yang tersedia belum cukup untuk memenuhi semuanya sekaligus. Sebagai anggota kelas, kamu diminta membantu menentukan kebutuhan mana yang perlu didahulukan.</p></div>
+ <h3>Perhatikan ketiga kebutuhan berikut.</h3>
+ <div class="cards">${items.map(x=>`<div class="item-card"><div class="item-icon">${x.icon}</div><div><strong>${x.name}</strong><small>${x.detail}</small></div></div>`).join('')}</div>
+ <div class="instruction">Susun ketiga kebutuhan dari yang paling perlu didahulukan hingga yang dapat ditunda. Pertimbangkan keselamatan, kelancaran belajar, manfaat, dan akibat jika kebutuhan tidak segera dipenuhi.</div>
+ <div class="order-list" id="orderList">${orderHTML()}</div>
+ <p class="muted">Gunakan tombol panah untuk mengubah posisi. Tidak ada urutan yang langsung diberi nilai benar atau salah; kamu akan dinilai dari alasan yang sesuai dengan situasi.</p>
+ <div class="feedback show warn">Periksa kembali urutanmu sebelum melanjutkan. Kamu akan menjelaskan alasan untuk setiap pilihan pada halaman berikutnya.</div>
+ <div class="actions"><button class="btn btn-secondary" onclick="go(0)">Sebelumnya</button><button class="btn btn-primary" onclick="saveOrder()">Simpan Urutan & Lanjutkan</button></div>`;
+}
+function orderHTML(){
+ return state.order.map((id,i)=>`<div class="order-row"><div class="rank">${i+1}</div><strong>${items[id].icon} ${items[id].name}</strong><div class="order-actions">
+ <button class="icon-btn" aria-label="Naikkan" onclick="move(${i},-1)" ${i===0?'disabled':''}>↑</button>
+ <button class="icon-btn" aria-label="Turunkan" onclick="move(${i},1)" ${i===2?'disabled':''}>↓</button>
+ </div></div>`).join('');
+}
+function move(i,d){
+ const j=i+d;if(j<0||j>2)return;
+ [state.order[i],state.order[j]]=[state.order[j],state.order[i]];
+ document.getElementById('orderList').innerHTML=orderHTML();
+}
+function saveOrder(){
+  const changed=!state.initialOrder||state.order.some((id,i)=>id!==state.initialOrder[i]);
+  state.initialOrder=[...state.order];
+  if(changed){state.reasons=['','',''];state.revisedOrder=null;state.changeDecision='';state.changeReason='';state.transferAnswer='';}
+  go(2);
+}
+function renderReasons(){
+ screen.innerHTML=`
+ <div class="kicker">Misi 2 · Menjelaskan keputusan</div><h2>Jelaskan Alasanmu!</h2>
+ <p class="subtitle" style="margin-left:0">Urutan yang kamu buat: <strong>${state.initialOrder.map((id,i)=>`${i+1}. ${items[id].short}`).join(' · ')}</strong></p>
+ <div class="instruction">Jelaskan mengapa setiap kebutuhan berada pada urutan tersebut. Setiap jawaban minimal <strong>12 kata</strong> dan harus menghubungkan kondisi, manfaat/kepentingan, serta akibat jika ditunda. Gunakan bahasamu sendiri.</div>
+ ${state.initialOrder.map((id,i)=>`<div class="field">
+   <label for="reason${i}">Prioritas ${i+1}: ${items[id].name}</label>
+   <div class="sentence-guide"><strong>Panduan kalimat:</strong> "Saya menempatkan ${items[id].short.toLowerCase()} pada urutan ${i+1} karena kondisi ..., barang ini bermanfaat untuk ..., dan jika ditunda maka ..."</div>
+   <textarea id="reason${i}" oninput="updateWordCount('reason${i}',12)" placeholder="Tuliskan alasan lengkapmu (minimal 12 kata)...">${escapeHTML(state.reasons[i])}</textarea>
+   <div class="word-count" id="count-reason${i}">0/12 kata minimal</div>
+  </div>`).join('')}
+ <div class="feedback show warn">Cek setiap alasan: apakah sudah menyebutkan kondisi barang, manfaat atau kepentingannya, dan akibat jika pembelian ditunda? Jangan menyalin panduan kalimat secara mentah.</div>
+ <div class="actions"><button class="btn btn-secondary" onclick="go(1)">Sebelumnya</button><button class="btn btn-primary" onclick="saveReasons()">Simpan Alasan & Lanjutkan</button></div>`;
+ state.reasons.forEach((_,i)=>updateWordCount('reason'+i,12));
+}
+function wordCount(text){return text.trim()?text.trim().split(/\s+/).length:0;}
+function updateWordCount(id,min){
+ const field=document.getElementById(id),counter=document.getElementById('count-'+id);
+ if(!field||!counter)return;
+ const n=wordCount(field.value);
+ counter.textContent=`${n}/${min} kata minimal`;
+ counter.classList.toggle('ok',n>=min);
+}
+function saveReasons(){
+ const vals=[0,1,2].map(i=>document.getElementById('reason'+i).value.trim());
+ const short=vals.map((v,i)=>({i,n:wordCount(v)})).filter(x=>x.n<12);
+ if(short.length){showAlert(`Alasan prioritas ${short.map(x=>x.i+1).join(', ')} masih kurang. Setiap alasan harus minimal 12 kata. Tambahkan penjelasan tentang kondisi, manfaat, atau akibat jika ditunda.`);return;}
+ state.reasons=vals;go(3);
+}
+function renderChange(){
+ const orderText=(state.revisedOrder||state.initialOrder||state.order).map((id,i)=>`${i+1}. ${items[id].short}`).join(' · ');
+ screen.innerHTML=`
+ <div class="kicker">Misi 3 · Perubahan kondisi</div><h2>Apakah Keputusanmu Berubah?</h2>
+ <p>Kamu sudah menentukan prioritas dan menjelaskan alasanmu. Sekarang, perhatikan informasi baru berikut.</p>
+ <div class="change-box"><strong>Informasi tambahan</strong><p>Guru memberikan informasi baru. Untuk hari ini, kelas dapat meminjam kotak P3K lengkap dari ruang guru. Namun, besok kelas akan membuat poster dan semua spidol yang tersedia ternyata sudah tidak dapat digunakan. Hiasan kelas tetap dibutuhkan untuk memperindah kelas pada bulan depan. Dana kelas masih terbatas, sehingga kamu perlu meninjau kembali urutan kebutuhan.</p></div>
+ <div class="instruction">Setelah mendapatkan informasi baru, apakah urutan prioritasmu masih sama? Pertimbangkan kembali keputusanmu berdasarkan kondisi terbaru.</div>
+ <label for="revised">Atur kembali urutan prioritasmu</label>
+ <div class="order-list" id="revisedList">${orderHTMLFor(state.revisedOrder||state.initialOrder||state.order)}</div>
+ <div class="field"><label for="decision">Apa yang kamu lakukan terhadap keputusan awal?</label>
+ <select id="decision"><option value="">Pilih jawaban</option><option value="ubah" ${state.changeDecision==='ubah'?'selected':''}>Saya mengubah urutan prioritas</option><option value="tetap" ${state.changeDecision==='tetap'?'selected':''}>Saya mempertahankan urutan prioritas</option></select></div>
+ <div class="field"><label for="changeReason">Jelaskan alasanmu. Bagaimana informasi baru memengaruhi keputusanmu?</label>
+ <div class="sentence-guide"><strong>Panduan kalimat:</strong> "Saya memilih untuk ... karena informasi baru menunjukkan bahwa ..., sehingga kebutuhan ... menjadi lebih/kurang mendesak. Jika ditunda, ..."</div>
+ <textarea id="changeReason" oninput="updateWordCount('changeReason',15)" placeholder="Jelaskan alasanmu (minimal 15 kata)...">${escapeHTML(state.changeReason)}</textarea>
+ <div class="word-count" id="count-changeReason">0/15 kata minimal</div></div>
+ <p class="muted">Bandingkan situasi awal dengan informasi baru. Apakah tingkat urgensi setiap kebutuhan berubah? Urutan boleh berbeda selama alasanmu sesuai dengan informasi yang tersedia.</p>
+ <div class="actions"><button class="btn btn-secondary" onclick="go(2)">Sebelumnya</button><button class="btn btn-primary" onclick="saveChange()">Kirim untuk Evaluasi</button></div>`;
+ updateWordCount('changeReason',15);
+}
+function orderHTMLFor(order){
+ return order.map((id,i)=>`<div class="order-row"><div class="rank">${i+1}</div><strong>${items[id].icon} ${items[id].name}</strong><div class="order-actions"><button class="icon-btn" onclick="moveRevised(${i},-1)" ${i===0?'disabled':''}>↑</button><button class="icon-btn" onclick="moveRevised(${i},1)" ${i===2?'disabled':''}>↓</button></div></div>`).join('');
+}
+function moveRevised(i,d){
+ let a=[...(state.revisedOrder||state.initialOrder||state.order)],j=i+d;if(j<0||j>2)return;
+ [a[i],a[j]]=[a[j],a[i]];state.revisedOrder=a;
+ document.getElementById('revisedList').innerHTML=orderHTMLFor(a);
+}
+function saveChange(){
+ const decision=document.getElementById('decision').value;
+ const reason=document.getElementById('changeReason').value.trim();
+ if(!decision||wordCount(reason)<15){showAlert('Pilih tindakan terhadap keputusan awal dan tuliskan alasan minimal 15 kata. Jelaskan informasi baru dan pengaruhnya terhadap prioritas.');return;}
+ if(!state.revisedOrder)state.revisedOrder=[...state.initialOrder];
+ const actuallyChanged=state.revisedOrder.some((id,i)=>id!==state.initialOrder[i]);
+ if((decision==='ubah'&&!actuallyChanged)||(decision==='tetap'&&actuallyChanged)){
+  showAlert('Pilihan tindakan belum sesuai dengan urutan yang kamu susun. Jika memilih mengubah, susun urutan yang berbeda. Jika mempertahankan, kembalikan urutan seperti semula.');
+  return;
+ }
+ state.changeDecision=decision;state.changeReason=reason;
+ go(4);
+}
+function showAlert(msg){const old=document.getElementById('inlineAlert');if(old)old.remove();const d=document.createElement('div');d.id='inlineAlert';d.className='feedback show warn';d.textContent=msg;screen.querySelector('.actions').before(d);}
+function renderEvaluation(){
+ screen.innerHTML=`
+ <div class="kicker">Misi 4 · Evaluasi penalaran</div><h2>Periksa Kembali Keputusanmu!</h2>
+ <p class="subtitle" style="margin-left:0">Baca kembali jawabanmu. Evaluasi ini membantu kamu melihat bagian penalaran yang sudah dijelaskan dan yang masih perlu diperkuat.</p>
+ <div class="result-grid">
+  <div class="result-card"><strong>Urutan awal</strong><p>${state.initialOrder.map((id,i)=>`${i+1}. ${items[id].short}`).join('<br>')}</p></div>
+  <div class="result-card"><strong>Urutan setelah kondisi berubah</strong><p>${(state.revisedOrder||state.initialOrder).map((id,i)=>`${i+1}. ${items[id].short}`).join('<br>')}</p></div>
+ </div>
+ <div class="story"><strong>Daftar periksa penalaran</strong>
+ <p>□ Saya menjelaskan kondisi setiap kebutuhan, bukan hanya menyebut namanya.</p>
+ <p>□ Saya menjelaskan manfaat atau kepentingan setiap kebutuhan.</p>
+ <p>□ Saya mempertimbangkan akibat jika kebutuhan ditunda.</p>
+ <p>□ Saya menjelaskan bagaimana informasi baru memengaruhi keputusan.</p>
+ <p class="note">Beri tanda centang secara mandiri setelah membaca ulang jawabanmu. Daftar ini adalah panduan refleksi, bukan penilaian otomatis.</p></div>
+ <div class="transfer-box">
+  <h3>Hubungkan dengan Kehidupanmu</h3>
+  <p>Bayangkan kamu dan teman-teman sedang menyiapkan kegiatan kelas. Ada beberapa hal yang harus diselesaikan, tetapi waktu dan dana terbatas. Tuliskan satu contoh situasi lain di rumah atau sekolah ketika kamu perlu menentukan prioritas. Jelaskan apa yang kamu dahulukan dan mengapa.</p>
+  <div class="sentence-guide"><strong>Panduan:</strong> "Saat ..., saya perlu mendahulukan ... karena ..., sedangkan ... dapat ditunda karena ..."</div>
+  <label for="transferAnswer">Contoh penerapan dalam kehidupan sehari-hari (minimal 20 kata)</label>
+  <textarea id="transferAnswer" oninput="updateWordCount('transferAnswer',20)" placeholder="Tuliskan contoh dan alasanmu...">${escapeHTML(state.transferAnswer)}</textarea>
+  <div class="word-count" id="count-transferAnswer">0/20 kata minimal</div>
+ </div>
+ <div class="instruction">Baca kembali jawabanmu. Pastikan keputusanmu didukung alasan yang sesuai dengan kondisi, kepentingan, manfaat, dan akibat jika ditunda.</div>
+ <div class="feedback show warn">Kamu sedang berlatih menggunakan cara berpikir yang sama pada situasi yang berbeda. Dalam kehidupan nyata, prioritas dapat berubah ketika kondisi atau informasi berubah.</div>
+ <div class="actions"><button class="btn btn-secondary" onclick="go(3)">Kembali & Perbaiki</button><button class="btn btn-primary" onclick="saveTransfer()">Simpan Refleksi & Lihat Hasil</button></div>`;
+ updateWordCount('transferAnswer',20);
+}
+function saveTransfer(){
+  const answer=document.getElementById('transferAnswer').value.trim();
+  if(wordCount(answer)<20){
+    showAlert('Tuliskan contoh penerapan dalam kehidupan sehari-hari minimal 20 kata. Jelaskan situasi, prioritas, dan alasanmu.');
+    return;
+  }
+  state.transferAnswer=answer;
+  go(5);
+}
+function renderResult(){
+ screen.innerHTML=`
+ <section class="hero" style="padding:8px 0 18px"><div class="fox">🦊</div><div class="kicker">Misi selesai</div><h2>Hebat, Kamu Sudah Menyelesaikan Misi!</h2><p class="subtitle">Kamu telah menghadapi situasi baru, menentukan prioritas, menjelaskan alasan, dan mempertimbangkan perubahan kondisi.</p></section>
+ <div class="story"><strong>Ringkasan keputusanmu</strong>
+ <p><b>Urutan awal:</b> ${state.initialOrder.map((id,i)=>`${i+1}. ${items[id].short}`).join(' · ')}</p>
+ <p><b>Keputusan saat kondisi berubah:</b> ${state.changeDecision==='ubah'?'Mengubah urutan':'Mempertahankan urutan'}</p>
+ <p><b>Urutan terbaru:</b> ${(state.revisedOrder||state.initialOrder).map((id,i)=>`${i+1}. ${items[id].short}`).join(' · ')}</p></div>
+ <div class="transfer-box"><h3>Penerapan dalam Kehidupan Sehari-hari</h3><p>${escapeHTML(state.transferAnswer)}</p></div>
+ <div class="answer-key">
+  <h3>🔎 Contoh Jawaban dan Alasan yang Kuat</h3>
+  <p>Bandingkan contoh berikut dengan jawabanmu. Urutan dapat berbeda jika disertai alasan yang masuk akal berdasarkan kondisi dalam cerita.</p>
+  <strong>Kasus awal — contoh urutan yang diharapkan:</strong>
+  <ol>
+   <li><b>Mengganti isi kotak P3K.</b> Kotak P3K perlu segera diisi karena perlengkapan pertolongan pertama harus tersedia ketika ada siswa yang terluka atau membutuhkan bantuan. Jika ditunda, kelas tidak siap menghadapi keadaan darurat.</li>
+   <li><b>Membeli spidol.</b> Spidol yang hampir habis perlu diganti agar kegiatan belajar dan menulis di kelas tetap berjalan. Jika ditunda, kegiatan yang membutuhkan spidol bisa terganggu.</li>
+   <li><b>Membeli hiasan kelas.</b> Hiasan membuat kelas lebih menarik, tetapi bukan kebutuhan mendesak untuk keselamatan atau kegiatan belajar. Pembeliannya dapat ditunda.</li>
+  </ol>
+  <strong>Kasus setelah kondisi berubah — contoh urutan yang dapat dipertimbangkan:</strong>
+  <ol>
+   <li><b>Membeli spidol.</b> Spidol tidak dapat digunakan, sedangkan besok kelas akan membuat poster. Kebutuhan ini menjadi mendesak karena kegiatan besok memerlukannya.</li>
+   <li><b>Mengganti isi kotak P3K.</b> Kotak P3K tetap harus diisi agar perlengkapan pertolongan pertama tersedia. Namun, untuk kegiatan hari ini kelas dapat meminjam kotak P3K dari ruang guru, sehingga pengisiannya dapat menyusul.</li>
+   <li><b>Membeli hiasan kelas.</b> Hiasan masih diperlukan bulan depan, sehingga pembeliannya belum mendesak dan dapat ditunda.</li>
+  </ol>
+  <p class="note"><b>Ingat:</b> Ini contoh jawaban, bukan satu-satunya jawaban yang boleh diterima. Jawaban alternatif tetap dapat benar jika alasannya sesuai kondisi dan logis.</p>
+ </div>
+ <div class="instruction"><b>Periksa jawabanmu:</b> Apakah kamu sudah menjelaskan kondisi, manfaat, tingkat kepentingan, dan akibat jika kebutuhan ditunda? Jika belum, kamu dapat kembali untuk memperbaikinya.</div>
+ <div class="feedback show good">Menentukan prioritas bukan sekadar memilih barang yang disukai. Kamu perlu melihat kebutuhan yang paling penting dalam kondisi yang sedang dihadapi.</div>
+ <div class="actions"><button class="btn btn-secondary" onclick="go(4)">Kembali ke Evaluasi</button><button class="btn btn-primary" onclick="window.print()">Cetak Ringkasan</button></div>
+ <p class="note">Jawabanmu tersimpan selama halaman permainan ini belum dimuat ulang.</p>`;
+}
+function go(page){state.page=page;render();window.scrollTo({top:0,behavior:'smooth'});}
+render();
+</script>
+</body>
+</html>
